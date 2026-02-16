@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript">
+      (function() {
+        var container = document.querySelector('#_tcx-yuektbfs75');
+        if (!container) {
+          return;
+        }
+
+        function addToContainer(url, text) {
+          const wrapper = document.createElement('div');
+          wrapper.setAttribute('data-tcx-url', url);
+          wrapper.innerText = text;
+          container.appendChild(wrapper);
+        }
+
+        const fetch = window.fetch
+        window.fetch = function() {
+          return Promise.resolve(fetch.apply(window, arguments))
+              .then(async response => {
+                if (response.ok) {
+                  try {
+                    const clone = response.clone();
+                    const json = await clone.json();
+                    addToContainer(clone.url, JSON.stringify(json));
+                  } catch (err) {}
+                }
+                return response;
+              });
+        };
+
+        var XHR = XMLHttpRequest.prototype;
+        var send = XHR.send;
+        var open = XHR.open;
+        XHR.open = function(method, url) {
+          this.url = url;
+          return open.apply(this, arguments);
+        };
+        XHR.send = function() {
+          this.addEventListener('load', function() {
+            try {
+              const response = this.response;
+              if (response && response.length) {
+                const firstChar = response[0];
+                if (firstChar === '[' || firstChar === '{') {
+                  addToContainer(this.url, response);
+                }
+              }
+            } catch (err) {
+              // No-op.
+            }
+          });
+          return send.apply(this, arguments);
+        };
+      })();
+    </script>
+      <meta charset="UTF-8">
+      <title>Terraria Journey Tracker</title>
+      <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+      <div class="container">
+          <header>
+              <h1>🌳 Journey Research Tracker</h1>
+              <button id="themeToggle" class="icon-btn">🌓 Toggle Theme</button>
+          </header>
+          
+          <div class="setup-section">
+              <div class="upload-group full-width">
+                  <label>Upload Player File (Original <code>.plr</code> or <code>.dcy</code>):</label>
+                  <input type="file" id="plrInput" accept=".plr,.dcy">
+              </div>
+          </div>
+
+          <div id="status" class="status-msg">Database loaded: 6074 items.</div>
+
+          <div id="dashboard" class="hidden">
+              <div class="stats-bar">
+                  <div class="stat">
+                      <span class="label">Researchable Items</span>
+                      <span id="statTotal" class="val">0</span>
+                  </div>
+                  <div class="stat">
+                      <span class="label">Completed</span>
+                      <span id="statDone" class="val">0</span>
+                  </div>
+                  <div class="stat">
+                      <span class="label">In Progress</span>
+                      <span id="statProgressing" class="val">0</span>
+                  </div>
+                  <div class="stat">
+                      <span class="label">Completion %</span>
+                      <span id="statPercent" class="val">0%</span>
+                  </div>
+              </div>
+
+              <div class="controls">
+                  <input type="text" id="search" placeholder="Search items...">
+                  
+                  <select id="statusFilter" class="filter-select">
+                      <option value="all" selected="selected">All items</option>
+                      <option value="not_started">Not started</option>
+                      <option value="researching">Researching</option>
+                      <option value="incomplete">Incomplete</option>
+                      <option value="complete">Complete</option>
+                  </select>
+
+                  <div class="sort-group">
+                      <button class="sort-btn active" data-sort="id">ID</button>
+                      <button class="sort-btn" data-sort="name">A-Z</button>
+                      <button class="sort-btn" data-sort="req">Needed</button>
+                  </div>
+              </div>
+              
+              <div class="table-wrapper">
+                  <table>
+                      <thead>
+                          <tr>
+                              <th>ID</th>
+                              <th style="max-width: 15px;">Icon</th>
+                              <th>Item Name</th>
+                              <th>Research Progress</th>
+                              <th>Status</th>
+                          </tr>
+                      </thead>
+                      <tbody id="itemBody"></tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+      <script src="database.js"></script>
+      <script src="script.js"></script>
+  </body>
+  <footer>
+    All images were downloaded from <a href="https://terraria.wiki.gg/">the official Terraria Wiki</a> and are under
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0"> Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License </a>
+  </footer>
+</html>
