@@ -2,6 +2,10 @@ let MASTER_LIST = [];
 let CURRENT_SORT = "id";
 const ENCRYPTION_KEY_STR = "h3y_gUyZ";
 
+// --- Pagination Variables ---
+let CURRENT_PAGE = 1;
+let ITEMS_PER_PAGE = 50; 
+
 /**
  * Splits CSV lines while respecting quoted values containing commas.
  */
@@ -69,6 +73,8 @@ function loadDatabase() {
     document.getElementById("status").innerText =
       `Database loaded: ${MASTER_LIST.length} items.`;
     document.getElementById("plrInput").disabled = false;
+    document.querySelector(".custom-file-upload").style.opacity = "1";
+    document.querySelector(".custom-file-upload").style.cursor = "pointer";
   } catch (err) {
     document.getElementById("status").innerText = "Error loading database.";
   }
@@ -82,54 +88,18 @@ function getLocalItemAssets(itemDisplay, internalName) {
 
   // --- Special Differentiated Items ---
   const overrides = {
-    StrangePlant1: {
-      local: "Strange_Plant_(purple)",
-      wiki: "Strange_Plant_(purple)",
-    },
-    StrangePlant2: {
-      local: "Strange_Plant_(orange)",
-      wiki: "Strange_Plant_(orange)",
-    },
-    StrangePlant3: {
-      local: "Strange_Plant_(green)",
-      wiki: "Strange_Plant_(green)",
-    },
-    StrangePlant4: {
-      local: "Strange_Plant_(red)",
-      wiki: "Strange_Plant_(red)",
-    },
-    CorruptPlanterBox: {
-      local: "Deathweed_Planter_Box",
-      wiki: "Deathweed_Planter_Box",
-    },
-    CrimsonPlanterBox: {
-      local: "Crimsonweed_Planter_Box",
-      wiki: "Crimsonweed_Planter_Box",
-    },
-    FishingSeaweed: {
-      local: "Seaweed_(junk)",
-      wiki: "Seaweed_(junk)",
-    },
-    Seaweed: {
-      local: "Seaweed",
-      wiki: "Seaweed",
-    },
-    Constellation: {
-      local: "Constellation_(painting)",
-      wiki: "Constellation_(painting)",
-    },
-    ConstellationWhip: {
-      local: "Constellation",
-      wiki: "Constellation",
-    },
-    PrincessDress: {
-      local: "Princess_Dress",
-      wiki: "Princess_Dress",
-    },
-    PrincessDressNew: {
-      local: "Princess_Dress2",
-      wiki: "Princess_set_(Clothier)",
-    },
+    StrangePlant1: { local: "Strange_Plant_(purple)", wiki: "Strange_Plant_(purple)" },
+    StrangePlant2: { local: "Strange_Plant_(orange)", wiki: "Strange_Plant_(orange)" },
+    StrangePlant3: { local: "Strange_Plant_(green)", wiki: "Strange_Plant_(green)" },
+    StrangePlant4: { local: "Strange_Plant_(red)", wiki: "Strange_Plant_(red)" },
+    CorruptPlanterBox: { local: "Deathweed_Planter_Box", wiki: "Deathweed_Planter_Box" },
+    CrimsonPlanterBox: { local: "Crimsonweed_Planter_Box", wiki: "Crimsonweed_Planter_Box" },
+    FishingSeaweed: { local: "Seaweed_(junk)", wiki: "Seaweed_(junk)" },
+    Seaweed: { local: "Seaweed", wiki: "Seaweed" },
+    Constellation: { local: "Constellation_(painting)", wiki: "Constellation_(painting)" },
+    ConstellationWhip: { local: "Constellation", wiki: "Constellation" },
+    PrincessDress: { local: "Princess_Dress", wiki: "Princess_Dress" },
+    PrincessDressNew: { local: "Princess_Dress2", wiki: "Princess_set_(Clothier)" },
   };
 
   if (overrides[internal]) {
@@ -137,7 +107,7 @@ function getLocalItemAssets(itemDisplay, internalName) {
     wikiPage = overrides[internal].wiki;
   } else {
     if (name === "Conveyor Belt (Clockwise)") localFile = "Conveyor_Belt";
-    else if (name === "Stone Accent Slab") localFile = "Stone_Slab";
+    else if (name === "Stone Accen t Slab") localFile = "Stone_Slab";
     else if (name === "The Dirtiest Block") localFile = "Dirt_Block";
     else if (name === "Advanced Combat Techniques: Volume Two")
       localFile = "Advanced_Combat_Techniques_Volume_Two";
@@ -152,15 +122,8 @@ function getLocalItemAssets(itemDisplay, internalName) {
 
   let ext = "png";
   const gifs = [
-    "Rainbow Brick",
-    "Rainbow Brick Wall",
-    "Pink Fairy",
-    "Green Fairy",
-    "Blue Fairy",
-    "Helium Moss",
-    "Helium Moss Fishing Bobber",
-    "Helium Moss Brick",
-    "Helium Moss Brick Wall",
+    "Rainbow Brick", "Rainbow Brick Wall", "Pink Fairy", "Green Fairy", "Blue Fairy",
+    "Helium Moss", "Helium Moss Fishing Bobber", "Helium Moss Brick", "Helium Moss Brick Wall",
   ];
   if (gifs.includes(name)) ext = "gif";
 
@@ -173,13 +136,25 @@ function getLocalItemAssets(itemDisplay, internalName) {
 document.getElementById("plrInput").addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
+
   document.getElementById("status").innerText = "Analyzing...";
   const buffer = await file.arrayBuffer();
   const view = await decryptPlayerFile(buffer);
   const decoder = new TextDecoder();
-  MASTER_LIST.forEach((item) => (item.current = 0));
   const bufferUint8 = new Uint8Array(view.buffer);
+  let plrName = "Unknown Player";
+  
+  try {
+      const nameLen = view.getUint8(24); // Standard offset for name length in decrypted buffer
+      if (nameLen > 0 && nameLen < 32) {
+          plrName = decoder.decode(bufferUint8.slice(25, 25 + nameLen));
+      }
+  } catch (err) {
+      plrName = file.name.replace(".plr", ""); // Fallback to filename
+  }
+  document.getElementById("playerName").innerText = `${plrName}`;
 
+  MASTER_LIST.forEach((item) => (item.current = 0));
   for (let i = 0; i < view.byteLength - 10; i++) {
     const len = view.getUint8(i);
     if (len >= 2 && len < 64 && i + len + 4 < view.byteLength) {
@@ -194,15 +169,75 @@ document.getElementById("plrInput").addEventListener("change", async (e) => {
       }
     }
   }
+  CURRENT_PAGE = 1; // Reset to page 1 on new file load
   renderUI();
 });
+
+function renderPaginationControls(totalItems) {
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const containers = [document.getElementById("paginationTop"), document.getElementById("paginationBottom")];
+      
+  const html = `
+          <div class="pagination-wrapper">
+              <button class="sort-btn" ${CURRENT_PAGE === 1 ? "disabled" : ""} id="prevPageBtn">← Previous</button>
+              
+              <div class="page-jump">
+                  <span>Page</span>
+                  <input type="number" id="pageInput" class="page-num-input" 
+                        value="${CURRENT_PAGE}" min="1" max="${totalPages}">
+                  <span>of ${totalPages}</span>
+              </div>
+
+              <button class="sort-btn" ${CURRENT_PAGE >= totalPages ? "disabled" : ""} id="nextPageBtn">Next →</button>
+          </div>
+      `;
+  containers.forEach(container => {
+        if (!container) return;
+        container.innerHTML = html;
+        
+        // Navigation Buttons
+        container.querySelector("#prevPageBtn")?.addEventListener("click", () => {
+            CURRENT_PAGE--;
+            renderUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        container.querySelector("#nextPageBtn")?.addEventListener("click", () => {
+            CURRENT_PAGE++;
+            renderUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Jump to Page Input
+        const pInput = container.querySelector("#pageInput");
+        pInput?.addEventListener("change", (e) => {
+            let val = parseInt(e.target.value);
+            
+            // Validation: Ensure the number is within 1 and totalPages
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > totalPages) val = totalPages;
+            
+            CURRENT_PAGE = val;
+            renderUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Allow pressing "Enter" to trigger the change
+        pInput?.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                pInput.blur(); // Triggers the 'change' event
+            }
+        });
+    });
+}
 
 function renderUI() {
   document.getElementById("dashboard").classList.remove("hidden");
   const body = document.getElementById("itemBody");
   const searchTerm = document.getElementById("search").value.toLowerCase();
   const statusFilter = document.getElementById("statusFilter").value;
-
+  ITEMS_PER_PAGE = parseInt(document.getElementById("pageSize").value); // Update limit
+  // 1. Filter
   let displayList = MASTER_LIST.filter((item) => {
     const matchesSearch = item.display.toLowerCase().includes(searchTerm);
     let matchesStatus = true;
@@ -216,6 +251,7 @@ function renderUI() {
     return matchesSearch && matchesStatus;
   });
 
+  // 2. Sort
   displayList.sort((a, b) => {
     if (CURRENT_SORT === "id") return a.id - b.id;
     if (CURRENT_SORT === "name") return a.display.localeCompare(b.display);
@@ -223,7 +259,12 @@ function renderUI() {
     return 0;
   });
 
-  body.innerHTML = displayList
+  // 3. Paginate
+  const totalFiltered = displayList.length;
+  const start = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
+  const paginatedList = displayList.slice(start, start + ITEMS_PER_PAGE);
+
+  body.innerHTML = paginatedList
     .map((item) => {
       const isDone = item.current >= item.required;
       const assets = getLocalItemAssets(item.display, item.internal);
@@ -252,6 +293,7 @@ function renderUI() {
     })
     .join("");
 
+  // Update Stats
   const finished = MASTER_LIST.filter((i) => i.current >= i.required).length;
   document.getElementById("statTotal").innerText = MASTER_LIST.length;
   document.getElementById("statDone").innerText = finished;
@@ -261,6 +303,9 @@ function renderUI() {
   document.getElementById("statPercent").innerText =
     Math.round((finished / MASTER_LIST.length) * 10000)/100 + "%";
   document.getElementById("status").innerText = " ";
+
+  // Render Page Buttons
+  renderPaginationControls(totalFiltered);
 }
 
 function applyAutoTheme() {
@@ -278,6 +323,7 @@ window.addEventListener("DOMContentLoaded", () => {
   applyAutoTheme();
   loadDatabase();
 });
+
 document.querySelectorAll(".sort-btn").forEach((btn) => {
   btn.onclick = (e) => {
     document
@@ -285,8 +331,11 @@ document.querySelectorAll(".sort-btn").forEach((btn) => {
       .forEach((b) => b.classList.remove("active"));
     e.target.classList.add("active");
     CURRENT_SORT = e.target.dataset.sort;
+    CURRENT_PAGE = 1; // Reset to page 1 on sort change
     renderUI();
   };
 });
-document.getElementById("search").oninput = renderUI;
-document.getElementById("statusFilter").onchange = renderUI;
+
+document.getElementById("search").oninput = () => { CURRENT_PAGE = 1; renderUI(); };
+document.getElementById("statusFilter").onchange = () => { CURRENT_PAGE = 1; renderUI(); };
+document.getElementById("pageSize").onchange = () => { CURRENT_PAGE = 1; renderUI(); };
