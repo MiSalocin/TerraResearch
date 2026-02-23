@@ -23,7 +23,7 @@ body {
 }
 
 .container {
-    max-width: 950px;
+    max-width: 1500px;
     margin: 0 auto;
     background: var(--card);
     padding: 30px;
@@ -342,4 +342,65 @@ button{
 
 [data-theme="dark"] .player-info {
     background: rgba(255, 255, 255, 0.05);
+}
+
+/* Grid View Container */
+/* Grid View Container */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Slightly wider for better text flow */
+    gap: 15px;
+    padding: 20px 0;
+    align-items: stretch; /* Ensures all cards in a row have the same height */
+}
+
+/* Individual Grid Card */
+.item-card {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes progress text to the bottom */
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 3px solid transparent; /* Base border */
+}
+
+/* Status Border Colors */
+.item-card.done { border-color: #28a745; box-shadow: 0 0 5px rgba(40, 167, 69, 0.2); }
+.item-card.mid  { border-color: #ffc107; box-shadow: 0 0 5px rgba(255, 193, 7, 0.2); }
+.item-card.none { border-color: #dc3545; box-shadow: 0 0 5px rgba(220, 53, 69, 0.2); }
+
+.item-card:hover {
+    transform: scale(1.03);
+    z-index: 1;
+}
+
+.item-card img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    margin: 0 auto 10px;
+}
+
+/* Equal Height Text Logic */
+.item-name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--text-main);
+    flex-grow: 1; /* This makes the name container take up all available space */
+    display: flex;
+    align-items: center; /* Centers shorter text vertically within that space */
+    justify-content: center;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.mini-prog {
+    font-size: 0.75rem;
+    font-family: monospace;
+    opacity: 0.8;
+    padding-top: 5px;
+    border-top: 1px solid rgba(0,0,0,0.05);
 }
