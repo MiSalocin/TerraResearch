@@ -6,20 +6,30 @@ let ITEMS_PER_PAGE = 50;
 let CURRENT_SORT = "id";
 let CURRENT_VIEW = "list";
 let MASTER_LIST = [];
-let ACTIVE_TAGS =  [];
+let ACTIVE_TAGS = [];
 let ACTIVE_STATUSES = [];
 let SHOW_UNOB = false;
+const RESEARCH_DEPENDENCIES = {
+  5437: [5358, 5359, 5360, 5361], // Shellphone -> Home, Spawn, Ocean, Underworld
+  5324: [5329, 5330],             // Rubblemaker -> Medium, Large
+  4131: [5325],                   // Void Bag -> Closed void bag
+  4346: [5391],                   // Encubering stone -> Uncumbering
+  4767: [5453],                   // Critter companionship -> inactive
+  5309: [5454],                   // Environmental preservation -> inactive
+  5323: [5455],                   // Peaceful coexistence -> inactive
+  5526: [2611]                    // Flairon -> Flairoon
+};
 
 // Saves all user preferences (view, tags, status, page size) to localStorage.
 
 function savePreferences() {
-    const preferences = {
-        view: CURRENT_VIEW,
-        tags: ACTIVE_TAGS,
-        statuses: ACTIVE_STATUSES,
-        pageSize: ITEMS_PER_PAGE
-    };
-    localStorage.setItem('terraria_user_prefs', JSON.stringify(preferences));
+  const preferences = {
+    view: CURRENT_VIEW,
+    tags: ACTIVE_TAGS,
+    statuses: ACTIVE_STATUSES,
+    pageSize: ITEMS_PER_PAGE
+  };
+  localStorage.setItem('terraria_user_prefs', JSON.stringify(preferences));
 }
 
 // Logic from TCryptor for reading plr file
@@ -72,23 +82,23 @@ function loadDatabase() {
     // --- Retrieve Preferences ---
     const savedPrefs = localStorage.getItem('terraria_user_prefs');
     if (savedPrefs) {
-        const prefs = JSON.parse(savedPrefs);
-        
-        CURRENT_VIEW = prefs.view || "list";
-        ACTIVE_TAGS = prefs.tags || [];
-        ACTIVE_STATUSES = prefs.statuses || [];
-        ITEMS_PER_PAGE = prefs.pageSize || 50;
+      const prefs = JSON.parse(savedPrefs);
 
-        // Sync UI elements to match loaded preferences
-        document.getElementById("pageSize").value = ITEMS_PER_PAGE;
-        document.getElementById("viewToggle").innerText = CURRENT_VIEW === "list" ? "Grid View" : "List View";
-        
-        // Sync status button visual state
-        document.querySelectorAll("#statusGroup .btn").forEach(btn => {
-            if (ACTIVE_STATUSES.includes(btn.dataset.status)) {
-                btn.classList.add("active");
-            }
-        });
+      CURRENT_VIEW = prefs.view || "list";
+      ACTIVE_TAGS = prefs.tags || [];
+      ACTIVE_STATUSES = prefs.statuses || [];
+      ITEMS_PER_PAGE = prefs.pageSize || 50;
+
+      // Sync UI elements to match loaded preferences
+      document.getElementById("pageSize").value = ITEMS_PER_PAGE;
+      document.getElementById("viewToggle").innerText = CURRENT_VIEW === "list" ? "Grid View" : "List View";
+
+      // Sync status button visual state
+      document.querySelectorAll("#statusGroup .btn").forEach(btn => {
+        if (ACTIVE_STATUSES.includes(btn.dataset.status)) {
+          btn.classList.add("active");
+        }
+      });
     }
 
     // Load research progress from localStorage cache
@@ -155,6 +165,19 @@ document.getElementById("plrInput").addEventListener("change", async (e) => {
     }
   }
 
+  for (const [parentId, childIds] of Object.entries(RESEARCH_DEPENDENCIES)) {
+    const parentItem = MASTER_LIST.find(item => item.id == parentId);
+    if (parentItem && parentItem.current >= parentItem.required) {
+      childIds.forEach(cId => {
+        const childItem = MASTER_LIST.find(item => item.id == cId);
+        if (childItem) {
+            // Force child to be "Complete" by matching its own requirement
+            childItem.current = childItem.required; 
+        }
+      });
+    }
+  }
+
   // Save progress to cache
   const dataToSave = {};
   MASTER_LIST.forEach(item => { if (item.current > 0) dataToSave[item.internal] = item.current; });
@@ -210,34 +233,35 @@ function renderUI() {
   ITEMS_PER_PAGE = parseInt(document.getElementById("pageSize").value);
 
 
-let displayList = MASTER_LIST.filter(item => {
+  let displayList = MASTER_LIST.filter(item => {
     const searchTerm = document.getElementById("search").value.toLowerCase();
-    const matchesSearch = item.display.toLowerCase().includes(searchTerm);
-    
+    const matchesSearch = item.display.toLowerCase().includes(searchTerm) || 
+                      item.id.toString().includes(searchTerm);;
+
     // 1. Tag Filtering (OR Logic)
     if (ACTIVE_TAGS.length > 0) {
-        const itemTagsFlat = Object.values(item.tags).flat();
-        if (!ACTIVE_TAGS.some(tag => itemTagsFlat.includes(tag))) return false;
+      const itemTagsFlat = Object.values(item.tags).flat();
+      if (!ACTIVE_TAGS.some(tag => itemTagsFlat.includes(tag))) return false;
     }
 
     // 2. Status & Unobtainable Filtering (OR Logic)
     if (ACTIVE_STATUSES.length > 0) {
-        const matchesStatus = ACTIVE_STATUSES.some(status => {
-            if (status === "complete") return item.current >= item.required && !item.unobtainable;
-            if (status === "researching") return item.current > 0 && item.current < item.required && !item.unobtainable;
-            if (status === "not_started") return item.current === 0 && !item.unobtainable;
-            if (status === "unobtainable") return item.unobtainable;
-            return false;
-        });
-        if (!matchesStatus) return false;
+      const matchesStatus = ACTIVE_STATUSES.some(status => {
+        if (status === "complete") return item.current >= item.required && !item.unobtainable;
+        if (status === "researching") return item.current > 0 && item.current < item.required && !item.unobtainable;
+        if (status === "not_started") return item.current === 0 && !item.unobtainable;
+        if (status === "unobtainable") return item.unobtainable;
+        return false;
+      });
+      if (!matchesStatus) return false;
     } else {
-        // Default behavior: Hide unobtainable if no status filters are active
-        // (This replaces your old "Show Unobtainable" toggle)
-        if (item.unobtainable) return false;
+      // Default behavior: Hide unobtainable if no status filters are active
+      // (This replaces your old "Show Unobtainable" toggle)
+      if (item.unobtainable) return false;
     }
 
     return matchesSearch;
-});
+  });
 
 
   displayList.sort((a, b) => {
@@ -266,7 +290,7 @@ let displayList = MASTER_LIST.filter(item => {
             <td style="opacity:0.5">${item.id}</td>
             <td><img src="${item.icon}" class="item-icon" onerror="this.src='icons/Default.png';"></td>
             <td><a href="${item.wiki}" target="_blank" class="wiki-link"><strong>${item.display}</strong></a></td>
-            <td><div class="prog-bg"><div class="prog-fill" style="width:${unobClass ? 0 : pct}%"></div></div>${ unobClass ? '' : (item.current + '/' + item.required)}</td>
+            <td><div class="prog-bg"><div class="prog-fill" style="width:${unobClass ? 0 : pct}%"></div></div>${unobClass ? '' : (item.current + '/' + item.required)}</td>
             <td class="${unobClass ? 'unob' : isDone ? 'done' : item.current === 0 ? 'none' : 'mid'}">${unobClass ? 'UNOBTAINABLE' : isDone ? 'COMPLETE' : item.current === 0 ? 'NOT STARTED' : 'RESEARCHING'}</td>
         </tr>`;
     }).join("");
@@ -291,7 +315,7 @@ let displayList = MASTER_LIST.filter(item => {
                 <img src="${item.icon}" onerror="this.src='icons/Default.png';">
                 <div class="item-name">${item.display}</div>
             </a>
-            <div class="mini-prog">${ unobClass ? 'Unobtainable' : (item.current + '/' + item.required)}</div>
+            <div class="mini-prog">${unobClass ? 'Unobtainable' : (item.current + '/' + item.required)}</div>
         </div>`;
     }).join("");
   }
@@ -349,40 +373,40 @@ document.getElementById("search").oninput = () => { CURRENT_PAGE = 1; renderUI()
 document.getElementById("pageSize").onchange = () => { CURRENT_PAGE = 1; savePreferences(); renderUI(); };
 const tagModal = document.getElementById("tagModal");
 document.getElementById("tagFilterBtn").onclick = () => {
-    renderTagModal();
-    tagModal.classList.remove("hidden");
+  renderTagModal();
+  tagModal.classList.remove("hidden");
 };
 function renderTagModal() {
-    const container = document.getElementById("tagContainer");
-    container.innerHTML = "";
+  const container = document.getElementById("tagContainer");
+  container.innerHTML = "";
 
-    // Helper to calculate completion for a specific tag
-    const getTagStats = (tagName) => {
-        const itemsWithTag = MASTER_LIST.filter(item => 
-            !item.unobtainable && 
-            Object.values(item.tags).flat().includes(tagName)
-        );
-        if (itemsWithTag.length === 0) return null;
-        const done = itemsWithTag.filter(item => item.current >= item.required).length;
-        return {
-            percent: Math.floor((done / itemsWithTag.length) * 100),
-            count: itemsWithTag.length
-        };
+  // Helper to calculate completion for a specific tag
+  const getTagStats = (tagName) => {
+    const itemsWithTag = MASTER_LIST.filter(item =>
+      !item.unobtainable &&
+      Object.values(item.tags).flat().includes(tagName)
+    );
+    if (itemsWithTag.length === 0) return null;
+    const done = itemsWithTag.filter(item => item.current >= item.required).length;
+    return {
+      percent: Math.floor((done / itemsWithTag.length) * 100),
+      count: itemsWithTag.length
     };
+  };
 
-    for (let category in allTags) {
-        // Calculate overall category completion
-        const subTags = allTags[category];
-        const catItems = MASTER_LIST.filter(item => 
-            !item.unobtainable && 
-            Object.keys(item.tags).includes(category)
-        );
-        const catDone = catItems.filter(item => item.current >= item.required).length;
-        const catPercent = catItems.length > 0 ? Math.floor((catDone / catItems.length) * 100) : 0;
+  for (let category in allTags) {
+    // Calculate overall category completion
+    const subTags = allTags[category];
+    const catItems = MASTER_LIST.filter(item =>
+      !item.unobtainable &&
+      Object.keys(item.tags).includes(category)
+    );
+    const catDone = catItems.filter(item => item.current >= item.required).length;
+    const catPercent = catItems.length > 0 ? Math.floor((catDone / catItems.length) * 100) : 0;
 
-        const group = document.createElement("div");
-        group.className = "tag-group";
-        group.innerHTML = `
+    const group = document.createElement("div");
+    group.className = "tag-group";
+    group.innerHTML = `
             <h3 class="tag-header" data-cat="${category}" style="cursor: pointer;">
               <img class="img-cat" src="./icons/${category + ".png"}">
               <spam>${category}</spam>
@@ -390,118 +414,118 @@ function renderTagModal() {
             </h3>
             <div class="tag-list"></div>
         `;
-        
-        const list = group.querySelector(".tag-list");
-        subTags.forEach(tag => {
-            const stats = getTagStats(tag);
-            if (!stats) return; // Skip tags with no items
 
-            const chip = document.createElement("div");
-            const isActive = ACTIVE_TAGS.includes(tag);
-            chip.className = `tag-chip ${isActive ? 'active' : ''}`;
-            
-            // Added percentage to the chip text
-            chip.innerHTML = `${tag} <span class="chip-pct">${stats.percent}%</span>`;
-            
-            chip.onclick = () => {
-                if (ACTIVE_TAGS.includes(tag)) {
-                    ACTIVE_TAGS = ACTIVE_TAGS.filter(t => t !== tag);
-                } else {
-                    ACTIVE_TAGS.push(tag);
-                }
-                renderTagModal(); 
-                CURRENT_PAGE = 1;
-                savePreferences();
-                renderUI(); 
-            };
-            list.appendChild(chip);
-        });
-        container.appendChild(group);
-    }
+    const list = group.querySelector(".tag-list");
+    subTags.forEach(tag => {
+      const stats = getTagStats(tag);
+      if (!stats) return; // Skip tags with no items
+
+      const chip = document.createElement("div");
+      const isActive = ACTIVE_TAGS.includes(tag);
+      chip.className = `tag-chip ${isActive ? 'active' : ''}`;
+
+      // Added percentage to the chip text
+      chip.innerHTML = `${tag} <span class="chip-pct">${stats.percent}%</span>`;
+
+      chip.onclick = () => {
+        if (ACTIVE_TAGS.includes(tag)) {
+          ACTIVE_TAGS = ACTIVE_TAGS.filter(t => t !== tag);
+        } else {
+          ACTIVE_TAGS.push(tag);
+        }
+        renderTagModal();
+        CURRENT_PAGE = 1;
+        savePreferences();
+        renderUI();
+      };
+      list.appendChild(chip);
+    });
+    container.appendChild(group);
+  }
 }
 
 document.getElementById("closeModal").onclick = () => tagModal.classList.add("hidden");
 document.getElementById("clearTags").onclick = () => {
-    ACTIVE_TAGS = [];
-    renderTagModal();
-    renderUI();
+  ACTIVE_TAGS = [];
+  renderTagModal();
+  renderUI();
 };
 
 // Global click listener for category headers
 document.addEventListener("click", (e) => {
-    const header = e.target.closest(".tag-header");
-    if (!header) return;
+  const header = e.target.closest(".tag-header");
+  if (!header) return;
 
-    const category = header.dataset.cat;
-    const subTags = allTags[category];
-    
-    // Check if all subtags in this category are already in ACTIVE_TAGS
-    const allSelected = subTags.every(tag => ACTIVE_TAGS.includes(tag));
+  const category = header.dataset.cat;
+  const subTags = allTags[category];
 
-    if (allSelected) {
-        // If all are selected, remove them all (Deselect All)
-        ACTIVE_TAGS = ACTIVE_TAGS.filter(tag => !subTags.includes(tag));
-    } else {
-        // Otherwise, add any that are missing (Select All)
-        subTags.forEach(tag => {
-            if (!ACTIVE_TAGS.includes(tag)) ACTIVE_TAGS.push(tag);
-        });
-    }
+  // Check if all subtags in this category are already in ACTIVE_TAGS
+  const allSelected = subTags.every(tag => ACTIVE_TAGS.includes(tag));
 
-    // Refresh UI
-    renderTagModal();
-    CURRENT_PAGE = 1;
-    savePreferences();
-    renderUI();
+  if (allSelected) {
+    // If all are selected, remove them all (Deselect All)
+    ACTIVE_TAGS = ACTIVE_TAGS.filter(tag => !subTags.includes(tag));
+  } else {
+    // Otherwise, add any that are missing (Select All)
+    subTags.forEach(tag => {
+      if (!ACTIVE_TAGS.includes(tag)) ACTIVE_TAGS.push(tag);
+    });
+  }
+
+  // Refresh UI
+  renderTagModal();
+  CURRENT_PAGE = 1;
+  savePreferences();
+  renderUI();
 });
 
 document.querySelectorAll("#statusGroup .btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const status = btn.dataset.status;
-        
-        if (ACTIVE_STATUSES.includes(status)) {
-            ACTIVE_STATUSES = ACTIVE_STATUSES.filter(s => s !== status);
-            btn.classList.remove("active");
-        } else {
-            ACTIVE_STATUSES.push(status);
-            btn.classList.add("active");
-        }
-        
-        CURRENT_PAGE = 1;
-        savePreferences();
-        renderUI();
-    });
+  btn.addEventListener("click", () => {
+    const status = btn.dataset.status;
+
+    if (ACTIVE_STATUSES.includes(status)) {
+      ACTIVE_STATUSES = ACTIVE_STATUSES.filter(s => s !== status);
+      btn.classList.remove("active");
+    } else {
+      ACTIVE_STATUSES.push(status);
+      btn.classList.add("active");
+    }
+
+    CURRENT_PAGE = 1;
+    savePreferences();
+    renderUI();
+  });
 });
 
 
 function renderActiveFilters() {
-    const container = document.getElementById("activeFiltersBar");
-    const list = document.getElementById("activeFiltersList");
-    list.innerHTML = "";
-    if (ACTIVE_TAGS.length === 0) {
-      container.classList.add("hidden");
-      return;
-    } else {
-      console.log("a")
-      container.classList.remove("hidden");
-    }
+  const container = document.getElementById("activeFiltersBar");
+  const list = document.getElementById("activeFiltersList");
+  list.innerHTML = "";
+  if (ACTIVE_TAGS.length === 0) {
+    container.classList.add("hidden");
+    return;
+  } else {
+    console.log("a")
+    container.classList.remove("hidden");
+  }
 
-    // Add Pills for Tags
-    ACTIVE_TAGS.forEach(tag => {
-        const pill = document.createElement("div");
-        pill.className = "filter-pill";
-        pill.innerHTML = `<span>${tag}</span> <span class="remove-x">×</span>`;
-        pill.onclick = () => {
-            ACTIVE_TAGS = ACTIVE_TAGS.filter(t => t !== tag);
-            savePreferences();
-            renderUI();
-        };
-        list.appendChild(pill);
-    });
+  // Add Pills for Tags
+  ACTIVE_TAGS.forEach(tag => {
+    const pill = document.createElement("div");
+    pill.className = "filter-pill";
+    pill.innerHTML = `<span>${tag}</span> <span class="remove-x">×</span>`;
+    pill.onclick = () => {
+      ACTIVE_TAGS = ACTIVE_TAGS.filter(t => t !== tag);
+      savePreferences();
+      renderUI();
+    };
+    list.appendChild(pill);
+  });
 }
 
 document.getElementById("clearAllFilters").onclick = () => {
-    ACTIVE_TAGS = [];
-    savePreferences();
-    renderUI();
+  ACTIVE_TAGS = [];
+  savePreferences();
+  renderUI();
 };
