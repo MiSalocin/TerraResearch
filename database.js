@@ -39653,7 +39653,7 @@ const allItems = [
         itemUrl: "Flairon",
         id: 2611,
         researched: 0,
-        imageUrl: "Flairon.png"
+        imageUrl: "Flairoon.png"
     },
     {
         name: "Green Dungeon Chest",
