@@ -478,30 +478,13 @@ function renderActiveFilters() {
     const container = document.getElementById("activeFiltersBar");
     const list = document.getElementById("activeFiltersList");
     list.innerHTML = "";
-
-    
-    if (ACTIVE_TAGS.length === 0 && ACTIVE_STATUSES.length === 0) {
+    if (ACTIVE_TAGS.length === 0) {
       container.classList.add("hidden");
       return;
     } else {
       console.log("a")
       container.classList.remove("hidden");
     }
-    
-    // Add Pills for Statuses
-    ACTIVE_STATUSES.forEach(status => {
-        const pill = document.createElement("div");
-        pill.className = "filter-pill";
-        pill.innerHTML = `<span>${status}</span> <span class="remove-x">×</span>`;
-        pill.onclick = () => {
-            ACTIVE_STATUSES = ACTIVE_STATUSES.filter(s => s !== status);
-            // Also need to remove 'active' class from the actual button
-            document.querySelector(`[data-status="${status}"]`)?.classList.remove("active");
-            savePreferences();
-            renderUI();
-        };
-        list.appendChild(pill);
-    });
 
     // Add Pills for Tags
     ACTIVE_TAGS.forEach(tag => {
@@ -519,9 +502,6 @@ function renderActiveFilters() {
 
 document.getElementById("clearAllFilters").onclick = () => {
     ACTIVE_TAGS = [];
-    ACTIVE_STATUSES = [];
-    // Reset button visuals
-    document.querySelectorAll("#statusGroup .sort-btn").forEach(btn => btn.classList.remove("active"));
     savePreferences();
     renderUI();
 };
