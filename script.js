@@ -26,9 +26,7 @@ function splitCSVLine(line) {
   return result;
 }
 
-/**
- * Replicates TCryptor logic to decrypt the player file buffer.
- */
+// Logic from TCryptor for reading plr file
 async function decryptPlayerFile(encryptedBuffer) {
   const keyBuf = new ArrayBuffer(ENCRYPTION_KEY_STR.length * 2);
   const keyView = new Uint16Array(keyBuf);
@@ -54,6 +52,7 @@ async function decryptPlayerFile(encryptedBuffer) {
   }
 }
 
+// Load the items database
 function loadDatabase() {
     try {
         const rows = rawDatabase.trim().split("\n");
@@ -96,59 +95,7 @@ function loadDatabase() {
     }
 }
 
-function getLocalItemAssets(itemDisplay, internalName) {
-  const name = itemDisplay.trim();
-  const internal = internalName.trim();
-  let localFile = "";
-  let wikiPage = name.replace(/ /g, "_");
-
-  // --- Special Differentiated Items ---
-  const overrides = {
-    StrangePlant1: { local: "Strange_Plant_(purple)", wiki: "Strange_Plant_(purple)" },
-    StrangePlant2: { local: "Strange_Plant_(orange)", wiki: "Strange_Plant_(orange)" },
-    StrangePlant3: { local: "Strange_Plant_(green)", wiki: "Strange_Plant_(green)" },
-    StrangePlant4: { local: "Strange_Plant_(red)", wiki: "Strange_Plant_(red)" },
-    CorruptPlanterBox: { local: "Deathweed_Planter_Box", wiki: "Deathweed_Planter_Box" },
-    CrimsonPlanterBox: { local: "Crimsonweed_Planter_Box", wiki: "Crimsonweed_Planter_Box" },
-    FishingSeaweed: { local: "Seaweed_(junk)", wiki: "Seaweed_(junk)" },
-    Seaweed: { local: "Seaweed", wiki: "Seaweed" },
-    Constellation: { local: "Constellation_(painting)", wiki: "Constellation_(painting)" },
-    ConstellationWhip: { local: "Constellation", wiki: "Constellation" },
-    PrincessDress: { local: "Princess_Dress", wiki: "Princess_Dress" },
-    PrincessDressNew: { local: "Princess_Dress2", wiki: "Princess_set_(Clothier)" },
-  };
-
-  if (overrides[internal]) {
-    localFile = overrides[internal].local;
-    wikiPage = overrides[internal].wiki;
-  } else {
-    if (name === "Conveyor Belt (Clockwise)") localFile = "Conveyor_Belt";
-    else if (name === "Stone Accen t Slab") localFile = "Stone_Slab";
-    else if (name === "The Dirtiest Block") localFile = "Dirt_Block";
-    else if (name === "Advanced Combat Techniques: Volume Two")
-      localFile = "Advanced_Combat_Techniques_Volume_Two";
-    else if (name.startsWith("r/"))
-      localFile = name.replace("r/", "R_").replace(" ", "_");
-    else localFile = name.replace(/ /g, "_").replace(/\//g, "_");
-
-    wikiPage = name.replace(/ /g, "_").replace(/[:\/]/g, "_");
-    const suffixBoth = ["Fish", "Graveyard", "Remix", "The Destroyer"];
-    if (suffixBoth.includes(name)) wikiPage += "_(item)";
-  }
-
-  let ext = "png";
-  const gifs = [
-    "Rainbow Brick", "Rainbow Brick Wall", "Pink Fairy", "Green Fairy", "Blue Fairy",
-    "Helium Moss", "Helium Moss Fishing Bobber", "Helium Moss Brick", "Helium Moss Brick Wall",
-  ];
-  if (gifs.includes(name)) ext = "gif";
-
-  return {
-    wiki: `https://terraria.wiki.gg/wiki/${wikiPage}`,
-    icon: `icons/${localFile}.${ext}`,
-  };
-}
-
+// Handles .plr file upload, decryption, and scanning for research keys.
 document.getElementById("plrInput").addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -165,12 +112,15 @@ document.getElementById("plrInput").addEventListener("change", async (e) => {
     if (nameLen > 0 && nameLen < 32) {
       plrName = decoder.decode(bufferUint8.slice(25, 25 + nameLen));
     }
-  } catch (err) {
-    plrName = file.name.replace(".plr", ""); // Fallback to filename
-  }
-  document.getElementById("playerName").innerText = `${plrName}`;
+  } catch (err) { /* fallback to filename */ }
 
-  MASTER_LIST.forEach((item) => (item.current = 0));
+  document.getElementById("playerName").innerText = plrName;
+  document.getElementById("status").innerText = "";
+
+
+  // Reset current research then scan buffer for internalName strings
+  MASTER_LIST.forEach(item => item.current = 0);
+
   for (let i = 0; i < view.byteLength - 10; i++) {
     const len = view.getUint8(i);
     if (len >= 2 && len < 64 && i + len + 4 < view.byteLength) {
@@ -224,18 +174,8 @@ function renderPaginationControls(totalItems) {
     if (!container) return;
     container.innerHTML = html;
 
-    // Navigation Buttons
-    container.querySelector("#prevPageBtn")?.addEventListener("click", () => {
-      CURRENT_PAGE--;
-      renderUI();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    container.querySelector("#nextPageBtn")?.addEventListener("click", () => {
-      CURRENT_PAGE++;
-      renderUI();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    container.querySelector("#prevPageBtn")?.addEventListener("click", () => { CURRENT_PAGE--; renderUI(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    container.querySelector("#nextPageBtn")?.addEventListener("click", () => { CURRENT_PAGE++; renderUI(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
     // Jump to Page Input
     const pInput = container.querySelector("#pageInput");
@@ -299,15 +239,15 @@ function renderUI() {
 
     container.innerHTML = paginatedList.map(item => {
       const isDone = item.current >= item.required;
-      const assets = getLocalItemAssets(item.display, item.internal);
+      const unobClass = item.unobtainable; // Apply class
       const pct = Math.min(100, (item.current / item.required) * 100);
       return `
                 <tr>
                     <td style="opacity:0.5">${item.id}</td>
-                    <td><img src="${assets.icon}" class="item-icon" onerror="this.src='icons/Default.png';"></td>
-                    <td><a href="${assets.wiki}" target="_blank" class="wiki-link"><strong>${item.display}</strong></a></td>
-                    <td><div class="prog-bg"><div class="prog-fill" style="width:${pct}%"></div></div>${item.current}/${item.required}</td>
-                    <td class="${isDone ? 'done' : item.current === 0 ? 'none' : 'mid'}">${isDone ? 'COMPLETE' : item.current === 0 ? 'NOT STARTED' : 'RESEARCHING'}</td>
+            <td><img src="${item.icon}" class="item-icon" onerror="this.src='icons/Default.png';"></td>
+            <td><a href="${item.wiki}" target="_blank" class="wiki-link"><strong>${item.display}</strong></a></td>
+            <td><div class="prog-bg"><div class="prog-fill" style="width:${unobClass ? 0 : pct}%"></div></div>${ unobClass ? '' : (item.current + '/' + item.required)}</td>
+            <td class="${unobClass ? 'unob' : isDone ? 'done' : item.current === 0 ? 'none' : 'mid'}">${unobClass ? 'UNOBTAINABLE' : isDone ? 'COMPLETE' : item.current === 0 ? 'NOT STARTED' : 'RESEARCHING'}</td>
                 </tr>`;
     }).join("");
   } else {
