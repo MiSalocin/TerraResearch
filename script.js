@@ -84,7 +84,7 @@ function loadDatabase() {
         document.getElementById("viewToggle").innerText = CURRENT_VIEW === "list" ? "Grid View" : "List View";
         
         // Sync status button visual state
-        document.querySelectorAll("#statusGroup .sort-btn").forEach(btn => {
+        document.querySelectorAll("#statusGroup .btn").forEach(btn => {
             if (ACTIVE_STATUSES.includes(btn.dataset.status)) {
                 btn.classList.add("active");
             }
