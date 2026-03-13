@@ -9,6 +9,7 @@ let MASTER_LIST = [];
 let ACTIVE_TAGS = [];
 let ACTIVE_STATUSES = [];
 let SHOW_UNOB = false;
+var HARDMODE = 0;
 const RESEARCH_DEPENDENCIES = {
   5437: [5358, 5359, 5360, 5361], // Shellphone -> Home, Spawn, Ocean, Underworld
   5324: [5329, 5330],             // Rubblemaker -> Medium, Large
@@ -76,6 +77,7 @@ function loadDatabase() {
       icon: "icons/" + item.imageUrl,
       tags: item.tags,
       unobtainable: item.isUnobtainable || false, // Capture the boolean flag
+      hardmode: item.isHm || false,
       current: 0
     }));
 
@@ -243,7 +245,7 @@ function renderUI() {
       const itemTagsFlat = Object.values(item.tags).flat();
       if (!ACTIVE_TAGS.some(tag => itemTagsFlat.includes(tag))) return false;
     }
-
+    
     // 2. Status & Unobtainable Filtering (OR Logic)
     if (ACTIVE_STATUSES.length > 0) {
       const matchesStatus = ACTIVE_STATUSES.some(status => {
@@ -259,6 +261,9 @@ function renderUI() {
       // (This replaces your old "Show Unobtainable" toggle)
       if (item.unobtainable) return false;
     }
+
+    if    (HARDMODE == (Number(!item.hardmode) + 1))
+      return false
 
     return matchesSearch;
   });
@@ -479,6 +484,25 @@ document.addEventListener("click", (e) => {
   renderUI();
 });
 
+document.querySelectorAll("#phaseGroup .btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const hardmode = Number(btn.dataset.status);
+    document.querySelectorAll("#phaseGroup .btn").forEach(b => b.classList.remove("active"));
+
+    if (hardmode!=HARDMODE) {
+      HARDMODE = hardmode
+      console.log(HARDMODE)
+      btn.classList.add("active");
+    } else {
+      HARDMODE = 0
+    }
+
+    CURRENT_PAGE = 1;
+    savePreferences();
+    renderUI();
+  });
+});
+
 document.querySelectorAll("#statusGroup .btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const status = btn.dataset.status;
@@ -506,7 +530,6 @@ function renderActiveFilters() {
     container.classList.add("hidden");
     return;
   } else {
-    console.log("a")
     container.classList.remove("hidden");
   }
 
