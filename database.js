@@ -80898,7 +80898,7 @@ const allItems = [
         imageUrl: "Rod_of_Harmony.png"
     },
     {
-        name: "Advanced Combat \"Techniques\": Volume Two",
+        name: "Advanced Combat Techniques: Volume Two",
         neededForResearch: 1,
         tags: {
             "Consumables": [
@@ -80912,7 +80912,7 @@ const allItems = [
         itemUrl: "Advanced_Combat_Techniques_Volume_Two",
         id: 5336,
         researched: 0,
-        imageUrl: "Advanced_Combat_Techniques_Volume_Two.png"
+        imageUrl: "Advanced_Combat_Techniques:_Volume_Two.png"
     },
     {
         name: "Vital Crystal",
