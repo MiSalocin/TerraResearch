@@ -491,7 +491,6 @@ document.querySelectorAll("#phaseGroup .btn").forEach(btn => {
 
     if (hardmode!=HARDMODE) {
       HARDMODE = hardmode
-      console.log(HARDMODE)
       btn.classList.add("active");
     } else {
       HARDMODE = 0
