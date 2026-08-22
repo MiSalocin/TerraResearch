@@ -18,7 +18,9 @@ const RESEARCH_DEPENDENCIES = {
   4767: [5453],                   // Critter companionship -> inactive
   5309: [5454],                   // Environmental preservation -> inactive
   5323: [5455],                   // Peaceful coexistence -> inactive
-  5526: [2611]                    // Flairon -> Flairoon
+  5526: [2611],                   // Flairon -> Flairoon
+  6168: [6169,6193,6194],         // Chaos Cylinder -> Full, Random, Simple
+  6190: [6195],                   // World Parkour -> inactive
 };
 
 // Saves all user preferences (view, tags, status, page size) to localStorage.
@@ -28,7 +30,8 @@ function savePreferences() {
     view: CURRENT_VIEW,
     tags: ACTIVE_TAGS,
     statuses: ACTIVE_STATUSES,
-    pageSize: ITEMS_PER_PAGE
+    pageSize: ITEMS_PER_PAGE,
+    page: CURRENT_PAGE
   };
   localStorage.setItem('terraria_user_prefs', JSON.stringify(preferences));
 }
@@ -86,6 +89,7 @@ function loadDatabase() {
     if (savedPrefs) {
       const prefs = JSON.parse(savedPrefs);
 
+      CURRENT_PAGE = prefs.page || 1;
       CURRENT_VIEW = prefs.view || "list";
       ACTIVE_TAGS = prefs.tags || [];
       ACTIVE_STATUSES = prefs.statuses || [];
@@ -209,8 +213,19 @@ function renderPaginationControls(totalItems) {
     if (!container) return;
     container.innerHTML = html;
 
-    container.querySelector("#prevPageBtn")?.addEventListener("click", () => { CURRENT_PAGE--; renderUI(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-    container.querySelector("#nextPageBtn")?.addEventListener("click", () => { CURRENT_PAGE++; renderUI(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    container.querySelector("#prevPageBtn")?.addEventListener("click", () => {
+      CURRENT_PAGE--;
+      savePreferences();
+      renderUI();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    container.querySelector("#nextPageBtn")?.addEventListener("click", () => {
+      CURRENT_PAGE++;
+      savePreferences();
+      renderUI();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 
     const pInput = container.querySelector("#pageInput");
     pInput?.addEventListener("change", (e) => {
@@ -218,6 +233,7 @@ function renderPaginationControls(totalItems) {
       if (isNaN(val) || val < 1) val = 1;
       if (val > totalPages) val = totalPages;
       CURRENT_PAGE = val;
+      savePreferences();
       renderUI();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });

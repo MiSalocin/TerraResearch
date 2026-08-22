@@ -99896,15 +99896,677 @@ const allItems = [
         imageUrl: "Crimson_Altar_%28icon%29.png"
     },
     {
-        name: "Foxparks Tag Effect",
-        internalName: "FoxparksTagEffect",
+        name: "Deprecated",
+        internalName: "Deprecated6143",
         id: 6143,
         researched: 0,
         neededForResearch: 0,
         tags: { "Unobtainable": [] },
         isUnobtainable: true,
-        itemUrl: "Foxparks",
-        imageUrl: "Foxparks.png"
+        itemUrl: "",
+        imageUrl: "Emote_Emote_Confused.gif"
+    },
+    {
+        name: "Daybloom Staff",
+        neededForResearch: 1,
+        tags: {
+            "Weapons": [
+                "Magic Weapons"
+            ]
+        },
+        internalName: "DaybloomStaff",
+        itemUrl: "Daybloom_Staff",
+        id: 6152,
+        researched: 0,
+        imageUrl: "Daybloom_Staff.png"
+    },
+    {
+        name: "Glacier Fang",
+        neededForResearch: 1,
+        tags: {
+            "Weapons": [
+                "Magic Weapons"
+            ]
+        },
+        id: 6153,
+        researched: 0,
+        itemUrl: "Glacier_Fang",
+        imageUrl: "Glacier_Fang.png",
+        internalName: "GlacierFang"
+    },
+    {
+        name: "Mystic Bloom",
+        neededForResearch: 1,
+        tags: {
+            "Weapons": [
+                "Magic Weapons"
+            ]
+        },
+        id: 6154,
+        researched: 0,
+        itemUrl: "Mystic_Bloom",
+        imageUrl: "Mystic_Bloom.png",
+        internalName: "Petalstorm"
+    },
+    {
+        name: "Lightning Strike",
+        neededForResearch: 1,
+        tags: {
+            "Weapons": [
+                "Magic Weapons"
+            ]
+        },
+        id: 6155,
+        researched: 0,
+        itemUrl: "Lightning_Strike",
+        imageUrl: "Lightning_Strike.png",
+        internalName: "LightningStrike",
+        isHm: true
+    },
+    {
+        name: "Silver Bracer",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ],
+            "Misc": [
+                "Materials"
+            ]
+        },
+        id: 6156,
+        researched: 0,
+        itemUrl: "Silver_Bracer",
+        imageUrl: "Silver_Bracer.png",
+        internalName: "SilverBracer",
+        isHm: false
+    },
+    {
+        name: "Snake Band",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ],
+            "Misc": [
+                "Materials"
+            ]
+        },
+        id: 6157,
+        researched: 0,
+        itemUrl: "Snake_Band",
+        imageUrl: "Snake_Band.png",
+        internalName: "SnakeBand",
+        isHm: true
+    },
+    {
+        name: "Mobius Strip",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ],
+            "Misc": [
+                "Materials"
+            ]
+        },
+        id: 6158,
+        researched: 0,
+        itemUrl: "Mobius_Strip",
+        imageUrl: "Mobius_Strip.png",
+        internalName: "MobiusStrip",
+        isHm: true
+    },
+    {
+        name: "Wicked Armlet",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ],
+            "Misc": [
+                "Materials"
+            ]
+        },
+        id: 6159,
+        researched: 0,
+        itemUrl: "Wicked_Armlet",
+        imageUrl: "Wicked_Armlet.png",
+        internalName: "WickedArmlet",
+        isHm: true
+    },
+    {
+        name: "Razortip",
+        neededForResearch: 0,
+        tags: { "Unobtainable": [] },
+        isUnobtainable: true,
+        id: 6160,
+        researched: 0,
+        itemUrl: "Razortip",
+        imageUrl: "Razortip.png",
+        internalName: "SharpBarb"
+    },
+    {
+        name: "Clay Bud Staff",
+        neededForResearch: 1,
+        tags: {
+            "Weapon": [
+                "Summon Weapons"
+            ]
+        },
+        id: 6161,
+        researched: 0,
+        itemUrl: "Clay_Bud_Staff",
+        imageUrl: "Clay_Bud_Staff.png",
+        internalName: "ClayPotMinion",
+    },
+    {
+        name: "Ouroboros Ring",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6162,
+        researched: 0,
+        itemUrl: "Ouroboros_Ring",
+        imageUrl: "Ouroboros_Ring.png",
+        internalName: "OuroborosRing",
+        isHm: true
+    },
+    {
+        name: "Twilight Grasp",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6163,
+        researched: 0,
+        itemUrl: "Twilight_Grasp",
+        imageUrl: "Twilight_Grasp.png",
+        internalName: "TwilightGrasp",
+        isHm: true
+    },
+    {
+        name: "Ruinous Staff",
+        neededForResearch: 1,
+        tags: {
+            "Weapon": [
+                "Summon Weapons"
+            ]
+        },
+        id: 6164,
+        researched: 0,
+        itemUrl: "Ruinous_Staff",
+        imageUrl: "Ruinous_Staff.png",
+        internalName: "ForbiddenMinion",
+        isHm: true
+    },
+    {
+        name: "Poison Barb",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ],
+            "Misc": [
+                "Materials"
+            ]
+        },
+        id: 6165,
+        researched: 0,
+        itemUrl: "Poison_Barb",
+        imageUrl: "Poison_Barb.png",
+        internalName: "PoisonBarb",
+    },
+    {
+        name: "Harpy Charm",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ],
+            "Misc": [
+                "Materials"
+            ]
+        },
+        id: 6166,
+        researched: 0,
+        itemUrl: "Harpy_Charm",
+        imageUrl: "Harpy_Charm.png",
+        internalName: "HarpyCharm",
+    },
+    {
+        name: "Snapping Stone",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ],
+            "Misc": [
+                "Materials"
+            ]
+        },
+        id: 6167,
+        researched: 0,
+        itemUrl: "Snapping_Stone",
+        imageUrl: "Snapping_Stone.png",
+        internalName: "SnappingStone",
+    },
+    {
+        name: "Chaos Cylinder",
+        neededForResearch: 1,
+        tags: {
+            "": [
+                ""
+            ]
+        },
+        id: 6168,
+        researched: 0,
+        itemUrl: "Chaos_Cylinder",
+        imageUrl: "Chaos_Cylinder.png",
+        internalName: "AmmoCycler4",
+        isHm: true
+    },
+    {
+        name: "Chaos Cylinder (Full)",
+        neededForResearch: 1,
+        tags: {
+            "": [
+                ""
+            ]
+        },
+        id: 6169,
+        researched: 0,
+        itemUrl: "Chaos_Cylinder_%28Full%29",
+        imageUrl: "Chaos_Cylinder_%28Full%29.png",
+        internalName: "AmmoCyclerFullInv",
+        isHm: true
+    },
+    {
+        name: "Enchanted Timer",
+        neededForResearch: 0,
+        tags: { "Unobtainable": [] },
+        isUnobtainable: true,
+        id: 6170,
+        researched: 0,
+        itemUrl: "Enchanted_Timer",
+        imageUrl: "Enchanted_Timer.png",
+        internalName: "TimerCrit"
+    },
+    {
+        name: "Bejeweled Staff",
+        neededForResearch: 0,
+        tags: { "Unobtainable": [""]},
+        isUnobtainable: true,
+        id: 6171,
+        researched: 0,
+        itemUrl: "Bejeweled_Staff",
+        imageUrl: "Bejeweled_Staff.png",
+        internalName: "BejeweledStaff"
+    },
+    {
+        name: "Heavy Sling",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ],
+            "Misc": [
+                "Materials"
+            ]
+        },
+        id: 6172,
+        researched: 0,
+        itemUrl: "Heavy_Sling",
+        imageUrl: "Heavy_Sling.png",
+        internalName: "HeavySling",
+        isHm: true
+    },
+    {
+        name: "Arc Surge",
+        neededForResearch: 1,
+        tags: {
+            "Weapons": [
+                "Magic Weapons"
+            ]
+        },
+        id: 6173,
+        researched: 0,
+        itemUrl: "Arc_Surge",
+        imageUrl: "Arc_Surge.png",
+        internalName: "ArcSurge",
+        isHm: true
+    },
+    {
+        name: "Trusty Digtoise",
+        neededForResearch: 1,
+        tags: {
+            "Tools": [
+                "Other Tools"
+            ]
+        },
+        id: 6174,
+        researched: 0,
+        itemUrl: "Trusty_Digtoise",
+        imageUrl: "Digtoise.png",
+        internalName: "PalworldTrustyDigtoise",
+        isHm: true
+    },
+    {
+        name: "Scout's Sling",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6175,
+        researched: 0,
+        itemUrl: "Scout's_Sling",
+        imageUrl: "Scout's_Sling.png",
+        internalName: "ScoutSling",
+        isHm: true
+    },
+    {
+        name: "Templar's Sling",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6176,
+        researched: 0,
+        itemUrl: "Templar's_Sling",
+        imageUrl: "Templar's_Sling.png",
+        internalName: "TemplarSling",
+        isHm: true
+    },
+    {
+        name: "Royal Guard's Harness",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6177,
+        researched: 0,
+        itemUrl: "Royal_Guard's_Harness",
+        imageUrl: "Royal_Guard's_Harness.png",
+        internalName: "RoyalGuardHarness",
+        isHm: true
+    },
+    {
+        name: "Pyroclastic Stone",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6178,
+        researched: 0,
+        itemUrl: "Pyroclastic_Stone",
+        imageUrl: "Pyroclastic_Stone.png",
+        internalName: "Pyroclast",
+        isHm: true
+    },
+    {
+        name: "Armlet Of Ruin",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6179,
+        researched: 0,
+        itemUrl: "Armlet_Of_Ruin",
+        imageUrl: "Armlet_Of_Ruin.png",
+        internalName: "ArmletOfRuin",
+        isHm: true
+    },
+    {
+        name: "Seraph Necklace",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6180,
+        researched: 0,
+        itemUrl: "Seraph_Necklace",
+        imageUrl: "Seraph_Necklace.png",
+        internalName: "SeraphNecklace",
+        isHm: true
+    },
+    {
+        name: "Phoenix Quiver",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6181,
+        researched: 0,
+        itemUrl: "Phoenix_Quiver",
+        imageUrl: "Phoenix_Quiver.png",
+        internalName: "PhoenixQuiver",
+        isHm: true
+    },
+    {
+        name: "Wicked Claws",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6182,
+        researched: 0,
+        itemUrl: "Wicked_Claws",
+        imageUrl: "Wicked_Claws.png",
+        internalName: "WickedClaws",
+        isHm: true
+    },
+    {
+        name: "Silver Shield",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6183,
+        researched: 0,
+        itemUrl: "Silver_Shield",
+        imageUrl: "Silver_Shield.png",
+        internalName: "",
+    },
+    {
+        name: "Sweet Barb",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6184,
+        researched: 0,
+        itemUrl: "Sweet_Barb",
+        imageUrl: "Sweet_Barb.png",
+        internalName: "SweetBarb",
+    },
+    {
+        name: "Catalyst Band",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6185,
+        researched: 0,
+        itemUrl: "Catalyst_Band",
+        imageUrl: "Catalyst_Band.png",
+        internalName: "CatalystBand",
+        isHm: true
+    },
+    {
+        name: "Druidic Serpent Cloak",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6186,
+        researched: 0,
+        itemUrl: "Druidic_Serpent_Cloak",
+        imageUrl: "Druidic_Serpent_Cloak.png",
+        internalName: "DruidicSerpentCloak",
+        isHm: true
+    },
+    {
+        name: "Crossed Heart Necklace",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6187,
+        researched: 0,
+        itemUrl: "Crossed_Heart_Necklace",
+        imageUrl: "Crossed_Heart_Necklace.png",
+        internalName: "CrossedHeartNecklace",
+        isHm: true
+    },
+    {
+        name: "Restoration Shield",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6188,
+        researched: 0,
+        itemUrl: "Restoration_Shield",
+        imageUrl: "Restoration_Shield.png",
+        internalName: "RestorationShield",
+    },
+    {
+        name: "Mystic Arts Sash",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6189,
+        researched: 0,
+        itemUrl: "Mystic_Arts_Sash",
+        imageUrl: "Mystic_Arts_Sash.png",
+        internalName: "MysticArtsSash",
+        isHm: true
+    },
+    {
+        name: "Guide to Old World Parkour",
+        neededForResearch: 1,
+        tags: {
+            "Tools": [
+                "Other Tools"
+            ],
+        },
+        id: 6190,
+        researched: 0,
+        itemUrl: "Guide_to_Old_World_Parkour",
+        imageUrl: "Guide_to_Old_World_Parkour.png",
+        internalName: "OldStyleParkourBook",
+        isHm: true
+    },
+    {
+        name: "Little Kinship Peach",
+        neededForResearch: 10,
+        tags: {
+            "Misc": [
+                "Materials`"
+            ]
+        },
+        id: 6191,
+        researched: 0,
+        itemUrl: "Little_Kinship_Peach",
+        imageUrl: "Little_Kinship_Peach.png",
+        internalName: "PalworldLittleKinshipPeach",
+        isHm: true
+    },
+    {
+        name: "Kinship Peach",
+        neededForResearch: 1,
+        tags: {
+            "Misc": [
+                "Materials"
+            ]
+        },
+        id: 6192,
+        researched: 0,
+        itemUrl: "Kinship_Peach",
+        imageUrl: "Kinship_Peach.png",
+        internalName: "PalworldKinshipPeach",
+        isHm: true
+    },
+    {
+        name: "Chaos Cylinder (Random)",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6193,
+        researched: 0,
+        itemUrl: "Chaos_Cylinder",
+        imageUrl: "Chaos_Cylinder_(Random).png",
+        internalName: "AmmoCyclerRandom",
+        isHm: true
+    },
+    {
+        name: "Chaos Cylinder (Simple)",
+         neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Accessories"
+            ]
+        },
+        id: 6194,
+        researched: 0,
+        itemUrl: "Chaos_Cylinder",
+        imageUrl: "Chaos_Cylinder_(Simple).png",
+        internalName: "AmmoCyclerNoCycle",
+        isHm: true
+    },
+    {
+        name: "Guide to Old World Parkour (Inactive)",
+        neededForResearch: 1,
+        tags: {
+            "Tools": [
+                "Other Tools"
+            ]
+        },
+        id: 6195,
+        researched: 0,
+        itemUrl: "Guide_to_Old_World_Parkour",
+        imageUrl: "Guide_to_Old_World_Parkour_(Inactive).png",
+        internalName: "OldStyleParkourBookInactive",
+        isHm: true
     }
 ];
 
