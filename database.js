@@ -99907,6 +99907,80 @@ const allItems = [
         imageUrl: "Emote_Emote_Confused.gif"
     },
     {
+        name: "Giant Tiki",
+        itemUrl: "Giant_Tiki",
+        imageUrl: "Giant_Tiki.png",
+        internalName: "GiantTiki",
+        neededForResearch: 1,
+        tags: {
+            "Furniture": [
+                "Other Items"
+            ]
+        },
+        id: 6147,
+        researched: 0
+    },
+    {
+        name: "Trusty Cattiva",
+        itemUrl: "Trusty_Cattiva",
+        imageUrl: "Cattiva.png",
+        internalName: "PalworldMinionTrustyCattiva",
+        neededForResearch: 1,
+        tags: {
+            "Weapons": [
+                "Summon Weapons"
+            ]
+        },
+        id: 6148,
+        researched: 0,
+        isHm: true
+    },
+    {
+        name: "Trusty Foxparks",
+        itemUrl: "Trusty_Foxparks",
+        imageUrl: "Foxparks.png",
+        internalName: "PalworldMinionTrustyFoxsparks",
+        neededForResearch: 1,
+        tags: {
+            "Weapons": [
+                "Summon Weapons"
+            ]
+        },
+        id: 6149,
+        researched: 0,
+        isHm: true
+    },
+    {
+        name: "Trusty Chillet",
+        itemUrl: "Trusty_Chillet",
+        imageUrl: "Chillet.png",
+        internalName: "PalworldMountTrustyChillet",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Mounts"
+            ]
+        },
+        id: 6150,
+        researched: 0,
+        isHm: true
+    },
+    {
+        name: "Trusty Chillet Ignis",
+        itemUrl: "Trusty_Chillet_Ignis",
+        imageUrl: "Chillet_Ignis.png",
+        internalName: "PalworldMountTrustyChilletIgnis",
+        neededForResearch: 1,
+        tags: {
+            "Equipment": [
+                "Mounts"
+            ]
+        },
+        id: 6151,
+        researched: 0,
+        isHm: true
+    },
+    {
         name: "Daybloom Staff",
         neededForResearch: 1,
         tags: {
