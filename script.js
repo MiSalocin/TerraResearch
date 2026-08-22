@@ -342,10 +342,16 @@ function renderUI() {
   }
   // Update Stats
   const obtainableItems = MASTER_LIST.filter(i => !i.unobtainable);
+  finalItemList = obtainableItems
 
-  const totalObtainable = obtainableItems.length;
-  const finished = obtainableItems.filter(i => i.current >= i.required).length;
-  const progressing = obtainableItems.filter(i => i.current > 0 && i.current < i.required).length;
+  for (const [parentId, childIds] of Object.entries(RESEARCH_DEPENDENCIES)) {
+    childIds.forEach(childId => {
+      finalItemList = finalItemList.filter(i => i.id !== childId);
+    }); 
+  }
+  const totalObtainable = finalItemList.length;
+  const finished = finalItemList.filter(i => i.current >= i.required).length;
+  const progressing = finalItemList.filter(i => i.current > 0 && i.current < i.required).length;
 
   // Calculate percentage based only on obtainable items
   const percent = totalObtainable > 0
