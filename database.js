@@ -100234,8 +100234,8 @@ const allItems = [
         name: "Chaos Cylinder",
         neededForResearch: 1,
         tags: {
-            "": [
-                ""
+            "Equipment": [
+                "Accessories"
             ]
         },
         id: 6168,
@@ -100249,8 +100249,8 @@ const allItems = [
         name: "Chaos Cylinder (Full)",
         neededForResearch: 1,
         tags: {
-            "": [
-                ""
+            "Equipment": [
+                "Accessories"
             ]
         },
         id: 6169,
@@ -100274,7 +100274,7 @@ const allItems = [
     {
         name: "Bejeweled Staff",
         neededForResearch: 0,
-        tags: { "Unobtainable": [""]},
+        tags: { "Unobtainable": []},
         isUnobtainable: true,
         id: 6171,
         researched: 0,
@@ -100462,7 +100462,7 @@ const allItems = [
         researched: 0,
         itemUrl: "Silver_Shield",
         imageUrl: "Silver_Shield.png",
-        internalName: "",
+        internalName: "SilverShield",
     },
     {
         name: "Sweet Barb",
